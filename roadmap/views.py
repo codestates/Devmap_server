@@ -56,3 +56,13 @@ class SignOut(View):
     def post(self, request):
         logout(request)
         return redirect('/')
+
+class MeberInfo(View):
+    def get(self, request):
+        ''' 회원정보 리스트로 조회 '''
+        offset = int(request.GET.get('offset', 0))
+        limit  = int(request.GET.get('limit', 5))
+
+        account_list = User.objects.order_by('id').values('email', 'username', 'password')[offset:offset+limit]
+
+        return JsonResponse({'data' : list(account_list)}, status = 200)
