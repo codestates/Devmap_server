@@ -1,27 +1,52 @@
-from django.shortcuts import render, redirect
-from .models import Users
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
-from roadmap.models import Users
-from roadmap.serializers import RegisterSerializer
+from django.shortcuts import render
 
-@csrf_exempt
-def SignUp(request):
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = RegisterSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+import json
+import bcrypt
+import jwt
 
-@csrf_exempt
-def SignIn(request):
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = RegisterSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+from .models         import User
+from roadmap.settings import SECRET_KEY
+from django.views    import View
+from django.http     import HttpResponse, JsonResponse
+
+# Create your views here.
+
+class SignUp(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        try:
+            if User.objects.filter(email = data['email']).exists():
+                return JsonResponse({"message" : "EXISTS_EMAIL"}, status=400)
+            
+            User.objects.create(
+                username = data['username'],
+                email 	 = data['email'], 
+                password = bcrypt.hashpw(data["password"].encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
+            ).save()
+
+            return HttpResponse(status=200)
+            
+        except KeyError:
+            return JsonResponse({"message" : "INVALID_KEYS"}, status=400)
+
+class SignIn(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        try:
+            if User.objects.filter(email=data["email"]).exists():
+                user = User.objects.get(email=data["email"])
+
+                if bcrypt.checkpw(data['password'].encode('UTF-8'), user.password.encode('UTF-8')):
+
+                    token = jwt.encode({'user' : user.id}, SECRET_KEY, algorithm='HS256').decode('UTF-8')
+                    
+                    return JsonResponse({"token" : token}, status=200)
+
+                return HttpResponse(status=401)
+
+            return HttpResponse(status=400)
+        
+        except KeyError:
+            return JsonResponse({'message' : "INVALID_KEYS"}, status=400)
