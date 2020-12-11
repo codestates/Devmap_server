@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import redirect, render
 
 import json
 import bcrypt
@@ -50,3 +51,8 @@ class SignIn(View):
         
         except KeyError:
             return JsonResponse({'message' : "INVALID_KEYS"}, status=400)
+
+class SignOut(View):
+    def post(self, request):
+        logout(request)
+        return redirect('/')
