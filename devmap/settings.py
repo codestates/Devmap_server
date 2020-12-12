@@ -24,10 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'su7(u($)+t@=jiux@%s7w!fg-o1bi4$c7^(q)0%qcaa@pac!x^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['ec2-52-78-158-147.ap-northeast-2.compute.amazonaws.com', '52.78.158.147', 'devmap.ml', 'www.devmap.ml']
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Application definition
 
