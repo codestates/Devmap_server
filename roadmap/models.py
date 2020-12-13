@@ -6,6 +6,7 @@ class User(models.Model):
     username = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
+    confirmPassword = models.CharField(max_length=200)
     status = models.IntegerField(default=0)
 
     class Meta:
