@@ -12,6 +12,10 @@ from django.http     import HttpResponse, JsonResponse
 
 # Create your views here.
 
+class index(View):
+    def get(self, request):
+        return HttpResponse("Hello World!")
+
 class SignUp(View):
     def post(self, request):
         data = json.loads(request.body)
