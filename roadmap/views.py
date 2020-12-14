@@ -16,7 +16,7 @@ class index(View):
     def get(self, request):
         return HttpResponse("Hello World!")
 
-class SignUp(View):
+class signup(View):
     def post(self, request):
         data = json.loads(request.body)
 
@@ -36,7 +36,7 @@ class SignUp(View):
         except KeyError:
             return JsonResponse({"message" : "INVALID_KEYS"}, status=400)
 
-class SignIn(View):
+class signin(View):
     def post(self, request):
         data = json.loads(request.body)
 
@@ -57,12 +57,12 @@ class SignIn(View):
         except KeyError:
             return JsonResponse({'message' : "INVALID_KEYS"}, status=400)
 
-class SignOut(View):
+class signout(View):
     def post(self, request):
         logout(request)
         return redirect('/')
 
-class MeberInfo(View):
+class meberinfo(View):
     def get(self, request):
         ''' 회원정보 리스트로 조회 '''
         offset = int(request.GET.get('offset', 0))
