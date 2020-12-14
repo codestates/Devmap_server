@@ -28,7 +28,6 @@ class signup(View):
                 username = data['username'],
                 email 	 = data['email'], 
                 password = bcrypt.hashpw(data["password"].encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8"),
-                confirmPassword = bcrypt.hashpw(data["confirmPassword"].encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8"),
             ).save()
 
             return HttpResponse(status=200)
