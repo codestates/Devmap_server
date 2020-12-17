@@ -8,7 +8,7 @@ from rest_framework import routers, serializers, viewsets
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'is_staff']
+        fields = ['pk', 'url', 'username', 'email', 'is_staff']
 
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,7 +23,7 @@ router.register(r'mypage', UserViewSet)
 # Additionally, we include login URLs for the browsable API.
 
 urlpatterns = [
-    path('users/', include('roadmap.urls')),
+    path('users/', include('user.urls')),
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

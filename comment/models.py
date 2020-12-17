@@ -3,13 +3,12 @@ from django.conf import settings
 
 # Create your models here.
 
-class Roadmap(models.Model):
+class Comment(models.Model):
     userid = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-    commentsid = models.ForeignKey('comment.Comment', on_delete=models.CASCADE, null=True)
-    title = models.CharField(max_length=20)
+    roadmapid = models.ForeignKey('roadmap.Roadmap', on_delete=models.CASCADE, null=True)
     content = models.CharField(max_length=200)
-    frontback = models.IntegerField(default=0) 
+    rating = models.IntegerField(default=0)
     status = models.IntegerField(default=0)
 
     class Meta:
-        db_table = 'roadmaps'
+        db_table = 'comments'
