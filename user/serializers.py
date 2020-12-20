@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
-
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,31 +20,18 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
 
-# ChangePassword Serializer
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
-
+# UserInfo Serializer
+class UserinfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('old_password', 'password')
+        fields = ('id', 'username', 'email', 'password')
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+# ChangePassword Serializer
+class ChangePasswordSerializer(serializers.ModelSerializer):
 
-        return attrs
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
 
-    def validate_old_password(self, value):
-        user = self.context['request'].user
-        if not user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+    def validate_new_password(self, value):
+        validate_password(value)
         return value
-
-    def update(self, instance, validated_data):
-
-        instance.set_password(validated_data['password'])
-        instance.save()
-
-        return instance
