@@ -7,8 +7,8 @@ from knox.views import LoginView as KnoxLoginView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.http import HttpResponse
-import json
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -37,12 +37,14 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 # memberifno API
-class memberinfoAPI(generics.GenericAPIView):
-    def get(self,request,*args,**kwargs):
-        users = User.objects.all()
-        res = UserinfoSerializer(instance=users,many=True)
-        return HttpResponse(json.dumps(res.data,ensure_ascii=False))
-
+class MemberInfoAPI(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(User, pk=pk)
+    
+    def get(self, request, pk, format=None):
+        post = self.get_object(pk)
+        serializer = UserinfoSerializer(post)
+        return Response(serializer.data)
 
 # ChangePassword API
 class ChangePasswordAPI(generics.UpdateAPIView):
