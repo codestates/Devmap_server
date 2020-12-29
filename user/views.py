@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import UserSerializer, RegisterSerializer, UserinfoSerializer, ChangePasswordSerializer
@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -37,19 +38,16 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 # memberifno API
-class MemberInfoAPI(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(User, pk=pk)
-    
-    def get(self, request, pk, format=None):
-        post = self.get_object(pk)
-        serializer = UserinfoSerializer(post)
-        return Response(serializer.data)
+def MemberInfoAPI(request):
+    if request.method == 'GET':
+        users = User.objects.all()
+        serializer = UserinfoSerializer(users, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
 # ChangePassword API
 class ChangePasswordAPI(generics.UpdateAPIView):
-
     permission_classes = (IsAuthenticated, )
+
     def get_object(self, queryset=None):
         return self.request.user
     def put(self, request, *args, **kwargs):
