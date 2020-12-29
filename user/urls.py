@@ -1,11 +1,16 @@
-from .views import RegisterAPI, LoginAPI, MemberInfoAPI, ChangePasswordAPI
 from django.urls import path
-from knox import views as knox_views
+from user.views import (
+    MyObtainTokenPairView,
+    RegisterView, 
+    ChangePasswordView,
+    SignInfoView,
+)
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('signup/', RegisterAPI.as_view(), name='register'),
-    path('signin/', LoginAPI.as_view(), name='login'),
-    path('signout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('memberinfo/', MemberInfoAPI, name='memberinfo'),
-    path('memberinfochange/<int:pk>/', ChangePasswordAPI.as_view(), name='memberinfochange'),
+    path('signin/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+    path('signin/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('signup/', RegisterView.as_view(), name='auth_register'),
+    path('memberinfo/', SignInfoView, name='signinfo'),
+    path('memberinfochange/<int:pk>/', ChangePasswordView.as_view(), name='auth_change_password'),
 ]
