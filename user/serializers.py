@@ -26,6 +26,9 @@ class UserinfoSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password')
 
+    def create(self, validated_data):
+        return Account.objects.create_user(request_data=validated_data)
+
 # ChangePassword Serializer
 class ChangePasswordSerializer(serializers.ModelSerializer):
 
