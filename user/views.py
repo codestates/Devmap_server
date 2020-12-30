@@ -37,12 +37,17 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 # memberifno API
-class memberinfoAPI(generics.GenericAPIView):
-    def get(self,request,*args,**kwargs):
-        users = User.objects.all()
-        res = UserinfoSerializer(instance=users,many=True)
-        return HttpResponse(json.dumps(res.data,ensure_ascii=False))
+class memberinfoAPI(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = User.objects.all()
+    serializer_class = UserinfoSerializer
 
+    def get(self, request, format=None):
+        return Response(data={
+            'username': request.user.username,
+            'email': request.user.email,
+            },
+            status=status.HTTP_200_OK)
 
 # ChangePassword API
 class ChangePasswordAPI(generics.UpdateAPIView):
